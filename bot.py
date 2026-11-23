@@ -13,7 +13,7 @@ MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
 
 client = AsyncOpenAI(
     api_key=MISTRAL_API_KEY,
-    base_url="https://mistral.ai",
+    base_url="https://api.mistral.ai/v1",
 )
 
 bot = Bot(token=TELEGRAM_TOKEN)
