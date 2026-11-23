@@ -28,7 +28,7 @@ Thread(target=run_web, daemon=True).start()
 
 client = AsyncOpenAI(
     api_key=MISTRAL_API_KEY,
-    base_url="https://" + "api." + "mistral.ai" + "/v1",
+                base_url="https://" + "models." + "inference.ai." + "azure.com",
 )
 
 bot = Bot(token=TELEGRAM_TOKEN)
@@ -77,7 +77,7 @@ async def create_game(message: types.Message):
 
   try:
     response = await client.chat.completions.create(
-        model="mistral-small-latest",
+                    model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": GAME_PROMPT},
             {"role": "user", "content": f"Создай игру: {message.text}"},
