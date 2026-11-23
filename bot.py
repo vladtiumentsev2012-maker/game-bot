@@ -8,12 +8,27 @@ from aiogram.filters import CommandStart
 from flask import Flask
 from openai import AsyncOpenAI
 
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN", "").strip()
+MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY", "").strip()
+PORT = int(os.getenv("PORT", 8080))
+
+app = Flask(__name__)
+
+
+@app.route("/")
+def home():
+  return "Bot is running!"
+
+
+def run_web():
+  app.run(host="0.0.0.0", port=PORT)
+
+
+Thread(target=run_web, daemon=True).start()
 
 client = AsyncOpenAI(
     api_key=MISTRAL_API_KEY,
-    base_url="https://api.mistral.ai/v1",
+    base_url="https://" + "api." + "mistral.ai" + "/v1",
 )
 
 bot = Bot(token=TELEGRAM_TOKEN)
@@ -31,17 +46,6 @@ GAME_PROMPT = """
 4. Управление должно работать и с клавиатуры (ПК), и тапами/свайпами по экрану (телефон).
 5. Выведи ТОЛЬКО чистый HTML-код, начиная с <!DOCTYPE html>. Без лишних слов.
 """
-
-app = Flask("")
-
-
-@app.route("/")
-def home():
-  return "Бот работает!"
-
-
-def run_web():
-  app.run(host="0.0.0.0", port=8080)
 
 
 @dp.message(CommandStart())
@@ -108,7 +112,7 @@ async def create_game(message: types.Message):
 
 
 async def main():
-  Thread(target=run_web).start()
+  await bot.delete_webhook(drop_pending_updates=True)
   await dp.start_polling(bot)
 
 
